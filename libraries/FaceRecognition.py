@@ -8,6 +8,9 @@ class FaceRecognition(object):
     MaxFaceDistanceInVector = 0.6
 
     def __init__(self, allVectorsFromPeople: list, allNamesFromPeople: list):
+        self.vector = None
+        self.result_search_bool = None
+        self.result_search_int_distance = None
         self.allVectorsFromPeople = allVectorsFromPeople
         self.allNamesFromPeople = allNamesFromPeople
 
@@ -74,7 +77,8 @@ class FaceRecognition(object):
             if self.hayVector:
                 if MaxFaceDistanceInVector is not None:
                     self.MaxFaceDistanceInVector = MaxFaceDistanceInVector
-                self.result_search_bool = face_recognition.compare_faces(self.allVectorsFromPeople, self.vector,
+                self.result_search_bool = face_recognition.compare_faces(self.allVectorsFromPeople,
+                                                                         self.vector,
                                                                          self.MaxFaceDistanceInVector)
                 self.result_search_int_distance = face_recognition.face_distance(self.allVectorsFromPeople, self.vector)
 
@@ -82,14 +86,15 @@ class FaceRecognition(object):
                     best_match_index = np.argmin(self.result_search_int_distance)
 
                     name = None
+                    print(best_match_index, self.result_search_bool, self.result_search_int_distance)
                     if self.result_search_bool[best_match_index]:
                         name = self.allNamesFromPeople[best_match_index]
 
                     nombre = None
                     options = []
-                    for id in range(len(self.result_search_bool)):
-                        if self.result_search_bool[id]:
-                            options.append(id)
+                    for id_search in range(len(self.result_search_bool)):
+                        if self.result_search_bool[id_search]:
+                            options.append(id_search)
 
                     if best_match_index in options:
                         nombre = self.allNamesFromPeople[best_match_index]

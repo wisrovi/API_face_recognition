@@ -1,12 +1,27 @@
-from setuptools import setup
+from pydantic import BaseModel, EmailStr
+from typing import List
+from typing import Optional
 
-setup(
-    name='API_face_recognition',
-    version='1.0',
-    packages=[''],
-    url='',
-    license='MIT',
-    author='wisrovi',
-    author_email='wisrovi.rodriguez@gmail.com',
-    description='Api reconocimiento facial'
-)
+
+class About(BaseModel):
+    name: Optional[str] = None
+    version: Optional[str] = None
+    packages: Optional[List[str]] = None
+    url: Optional[str] = None
+    license: Optional[str] = None
+    author: Optional[str] = None
+    author_email: Optional[str] = None
+    description: Optional[str] = None
+    tipo: Optional[str] = None
+
+
+about = About()
+about.name = 'API_face_recognition'
+about.version = '1.0'
+about.packages = ['']
+about.url = 'https://github.com/wisrovi/API_face_recognition'
+about.license = 'MIT'
+about.author = 'wisrovi'
+about.author_email = 'wisrovi.rodriguez@gmail.com'
+about.description = 'Api reconocimiento facial'
+about.tipo = "Demo, todo dato se perdera cuando se reinicie el sistema"

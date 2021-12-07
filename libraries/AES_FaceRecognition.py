@@ -9,7 +9,8 @@ fr.SetMaxFaceDistanceInVector(MaxFaceDistanceInVector_forRecognition)
 
 
 class AES_FaceRecognition:
-    def ImageToStr(self, path):
+    @staticmethod
+    def ImageToStr(path):
         fr.ReadImage(pathImage=path)
         fr.ExtractVectorOfImage()
         vectorThatPerson = fr.GetVector()
@@ -17,8 +18,18 @@ class AES_FaceRecognition:
         vector_persona_str = crypto.VectorToString(vectorThatPerson)
         return vector_persona_str
 
-    def StrToVector(self, vector_persona_str):
+    @staticmethod
+    def StrToVector(vector_persona_str):
         vector = crypto.StringToVector(vector_persona_str)
         return vector
+
+    @staticmethod
+    def Search(vectores, nombres, path_face):
+        fr.SetAllVectorsFromPeople(vectores)
+        fr.SetAllNamesFromPeople(nombres)
+        fr.ReadImage(path_face)
+        fr.ExtractVectorOfImage()
+        print(fr.GetVector())
+        return fr.SearchPerson(path_face)
 
 
