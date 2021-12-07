@@ -1,0 +1,9 @@
+version: "3.7"
+services:
+   api_face_recognition:
+      container_name: api_face_recognition
+      image: face_recognition_api:V1.0
+      ports:
+         - 5050:5050
+      restart: always
+      privileged: true
