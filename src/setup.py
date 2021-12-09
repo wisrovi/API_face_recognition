@@ -17,7 +17,7 @@ class About(BaseModel):
 
 about = About()
 about.name = 'API_face_recognition'
-about.version = '1.0'
+about.version = '1.0.1'
 about.packages = [
     'cmake',
     'dlib',
