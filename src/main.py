@@ -45,8 +45,8 @@ todas_licencias.append(Licencia(
     dias_vencimiento=3650, registros_rostros=500, bytes=5e10, numero_hijos=5e10
 ))
 
-print("[ROOT-licence]:", todas_licencias[0].__dict__)
-print("[ROOT-user]:", todos_usuarios[0].__dict__)
+# print("[ROOT-licence]:", todas_licencias[0].__dict__)
+# print("[ROOT-user]:", todos_usuarios[0].__dict__)
 
 todos_log = list()
 
