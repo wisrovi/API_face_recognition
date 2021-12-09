@@ -16,3 +16,10 @@ DATABASE_CONECTION = {
     'database': 'AES_FaceRecognition',
     'raise_on_warnings': True
 }
+
+URL_HOST_API = "http://localhost:5050"
+
+gmail_user = 'wisrovi.rodriguez@gmail.com'
+gmail_password = 'ywmxtmeaxpgdjbhr'
+host = 'smtp.gmail.com'
+puerto = 465

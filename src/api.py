@@ -5,13 +5,15 @@ from typing import List
 from utils.utils import descargar_archivos, guardar_imagen
 from fastapi import FastAPI, File, Form, UploadFile, Depends, HTTPException, status
 from fastapi.responses import HTMLResponse
-from config.config import MaxFaceDistanceInVector_forRecognition
+from libraries.send_email import send_email
+from config.config import MaxFaceDistanceInVector_forRecognition, URL_HOST_API
 from libraries.AES_FaceRecognition import AES_FaceRecognition
 from setup import about, About
 from database.Dto.Input import RolUsuario, TipoDocumento, EmailStr
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from main import DATABASE
 from database.modelos.ObjectForm import Vector, Usuario, RelacionPersonaVector, Persona, Log, Licencia
+from datetime import date
 
 aes_fr = AES_FaceRecognition()
 app = FastAPI()
@@ -52,10 +54,7 @@ async def read_current_user(username: str = Depends(get_current_username)):
     return DATA_RTA
 
 
-@app.get("/{licencia}/plan")
-def ver_plan(licencia: str):
-    plan = dict()
-
+def get_license_by_codeLicence(licencia: str):
     licencia_encontrada = None
     for license in DATA.get("licencias"):
         licencia_guardada = license.__dict__
@@ -65,6 +64,28 @@ def ver_plan(licencia: str):
     if licencia_encontrada is None:
         return {"Error": "Esta licencia no existe"}
 
+    return licencia_encontrada
+
+
+def calculate_bytes_used(licencia_encontrada: dict):
+    conteo_bytes_usados = 0
+    for log_uso in DATA.get("log"):
+        este_log = log_uso.__dict__
+        if este_log.get("id_usuario") in [licencia_encontrada.get("id_usuario")]:
+            conteo_bytes_usados += este_log.get("bytes_usados")
+
+    return conteo_bytes_usados
+
+
+def calculate_faces_vectorized(licencia_encontrada: dict):
+    cantidad_rostros_vectorizados = 0
+    for vector in DATA.get("vector"):
+        if vector.__dict__.get("id_usuario") in [licencia_encontrada.get("id_usuario")]:
+            cantidad_rostros_vectorizados += 1
+    return cantidad_rostros_vectorizados
+
+
+def calculate_how_many_sons(licencia_encontrada: dict):
     ids_persona_asociadas = list()
     for usuarios in DATA.get("users"):
         if usuarios.__dict__.get("id_usuario_padre") == licencia_encontrada.get("id_usuario") or \
@@ -72,17 +93,32 @@ def ver_plan(licencia: str):
             ids_persona_asociadas.append(usuarios.__dict__.get("id"))
 
     cantidad_hijos_asociados = len(ids_persona_asociadas) - 1
+    return cantidad_hijos_asociados
 
-    conteo_bytes_usados = 0
-    for log_uso in DATA.get("log"):
-        este_log = log_uso.__dict__
-        if este_log.get("id_usuario") in ids_persona_asociadas:
-            conteo_bytes_usados += este_log.get("bytes_usados")
 
-    cantidad_rostros_vectorizados = 0
-    for vector in DATA.get("vector"):
-        if vector.__dict__.get("id_usuario") in ids_persona_asociadas:
-            cantidad_rostros_vectorizados += 1
+def calculate_diference_between_two_datetime(first: datetime, second: datetime):
+    return (second - first).days
+
+
+def valid_correct_licence(licencia: dict):
+    id_usuario_registra = licencia.get("id_usuario")
+    if id_usuario_registra is None:
+        return {"Error": "Esta licencia no esta autorizada o no es valida"}
+
+    hoy = datetime.datetime.now()
+    fecha_vencimiento = licencia.get("fecha_vencimiento")
+    if fecha_vencimiento < hoy:
+        return {"Error": "Esta licencia ya expiro"}
+
+
+@app.get("/{licencia}/plan")
+def ver_plan(licencia: str):
+    plan = dict()
+
+    licencia_encontrada = get_license_by_codeLicence(licencia)
+    cantidad_hijos_asociados = calculate_how_many_sons(licencia_encontrada)
+    conteo_bytes_usados = calculate_bytes_used(licencia_encontrada)
+    cantidad_rostros_vectorizados = calculate_faces_vectorized(licencia_encontrada)
 
     plan['licencia'] = licencia
     plan['fechas'] = dict(Registro=licencia_encontrada.get("fecha_registro"),
@@ -110,40 +146,44 @@ async def register_user_login(licencia_autoriza: str,
                               rol: RolUsuario = Form(...),
 
                               usuario: str = Form(...),
-                              password: str = Form(...)
+                              password: str = Form(...),
+
+                              bytes_put: int = Form(...),
+                              hijos_put: int = Form(...),
+                              expira_put: datetime.date = Form(...),
+                              rostros_put: int = Form(...)
                               ):
     global DATA
-    es_hijo = None
-    id_usuario_registra = None
-    conteo = 0
-    for licencia in DATA.get("licencias"):
-        if licencia.__dict__.get("licencia") == licencia_autoriza:
-            id_usuario_registra = licencia.__dict__.get("id_usuario")
-            limite_hijos = licencia.__dict__.get("cantidad_hijos_que_puede_tener")
+    expira_put = datetime.datetime.combine(expira_put, datetime.datetime.min.time())
 
-            fecha_vencimiento = licencia.__dict__.get("fecha_vencimiento")
-            hoy = datetime.datetime.now()
-            if fecha_vencimiento < hoy:
-                return {"Error": "Esta licencia ya expiro"}
+    licencia = get_license_by_codeLicence(licencia_autoriza)
+    valid_correct_licence(licencia)
 
-            conteo_hijos_ya_registrados = 0
-            for usuarios in DATA.get("users"):
-                if usuarios.__dict__.get("id_usuario_padre") == id_usuario_registra:
-                    conteo_hijos_ya_registrados += 1
+    limite_hijos = licencia.get("cantidad_hijos_que_puede_tener")
+    numero_hijos = calculate_how_many_sons(licencia)
 
-            if conteo == 0:
-                es_hijo = False
-            else:
-                es_hijo = True
+    if numero_hijos >= limite_hijos:
+        return {"Error": f"Esta licencia no permite tener mas hijos asignados, el limite es {limite_hijos}"}
 
-            if conteo_hijos_ya_registrados >= limite_hijos:
-                return {"Error": f"Esta licencia no permite tener mas hijos asignados, el limite es {limite_hijos}"}
+    if (hijos_put + numero_hijos) > limite_hijos:
+        return {
+            "Error": f"Esta licencia no permite tener esta cantidad de hijos asignados, el restante a usar es {limite_hijos - numero_hijos}/{limite_hijos}"}
 
-            break
-        conteo += 1
+    fecha_vencimiento = licencia.get("fecha_vencimiento")
+    if expira_put > fecha_vencimiento:
+        return {"Error": f"Esta nueva licencia no puede ser mayor a la fecha de vencimiento de la licencia original ({fecha_vencimiento})"}
 
-    if id_usuario_registra is None:
-        return {"Error": "Esta licencia no esta autorizada o no es valida"}
+    bytes_used = calculate_bytes_used(licencia)
+    max_bytes = licencia.get("plan_bytes")
+    if (max_bytes - bytes_used) < bytes_put:
+        return {
+            "Error": f"Esta licencia no tiene los bytes suficientes para configurar la nueva licencia. Maximos {max_bytes} - usados {bytes_used} - requeridos {bytes_put}"}
+
+    max_rostros_vectorizados = licencia.get("cantidad_maxima_rostros_permitidos_tabla_vector")
+    rostros_vectorizados = calculate_faces_vectorized(licencia)
+    if (max_rostros_vectorizados - rostros_vectorizados) < rostros_put:
+        return {
+            "Error": f"Esta licencia no tiene los rostros suficientes para configurar la nueva licencia. Maximos {max_rostros_vectorizados} - usados {rostros_vectorizados} - requeridos {rostros_put}"}
 
     received = guardar_imagen(foto_persona)
     nombre_archivo = received.get("path")
@@ -159,6 +199,8 @@ async def register_user_login(licencia_autoriza: str,
         if tipo_doc.__dict__.get("tipo_documento") == tipo_documento.__dict__.get('_value_'):
             tipo_documento = tipo_doc
             break
+
+    id_usuario_registra = licencia.get("id_usuario")
 
     new_person = Persona(nombre=primer_nombre, nombre_2=segundo_nombre,
                          apellido=primer_apellido, apellido_2=segundo_apellido,
@@ -177,9 +219,30 @@ async def register_user_login(licencia_autoriza: str,
                                          vector=new_vector.id,
                                          registra=id_usuario_registra)
 
-    if not es_hijo:
-        licencia = Licencia(id_usuario_propietario_licencia=new_user.__dict__.get("id"), numero_hijos=1)
-        DATA.get("licencias").append(licencia)
+    hoy = datetime.datetime.now()
+    licencia = Licencia(id_usuario_propietario_licencia=new_user.__dict__.get("id"),
+                        numero_hijos=hijos_put, bytes=bytes_put,
+                        dias_vencimiento=calculate_diference_between_two_datetime(hoy, expira_put),
+                        registros_rostros=rostros_put)
+    licencia_nueva = licencia.__dict__.get("licencia")
+    licencia_nueva_vence = licencia.__dict__.get("fecha_vencimiento")
+
+    subject = "Nueva licencia API_FaceRecognition"
+    message = f"""se ha creado una nueva licencia para la Api de reconocimiento facial, esta tiene el codigo
+{licencia_nueva} la cual vence el {licencia_nueva_vence}, esta puede registrar {bytes_put} bytes 
+y podria tener {hijos_put} hijos adicionales, finalmente con el uso de esta licencia podria vectorizar 
+{rostros_put} rostros para ser reconocidos, la documentacion de esta api la puede obtener de {URL_HOST_API}/docs."""
+    send_email(email, subject, message)
+
+    bytes_donate = bytes_put / rostros_put
+    for _ in range(rostros_put):
+        new_log = Log(usuario=id_usuario_registra,
+                      name_file=f"donate to {licencia_nueva}",
+                      bytes_used=bytes_donate)
+        DATA.get("log").append(new_log)
+        print(f"donado {bytes_donate}")
+
+    DATA.get("licencias").append(licencia)
 
     DATA.get("vector").append(new_vector)
     DATA.get("person_vector").append(new_relation)
@@ -206,7 +269,10 @@ async def register_user_login(licencia: str,
                               numero_documento: int = Form(...),
                               ):
     global DATA
-    id_usuario_registra = None
+    licencia = get_license_by_codeLicence(licencia)
+    id_usuario_registra = licencia.get("id_usuario")
+
+
     conteo = 0
     for licencia_obj in DATA.get("licencias"):
         if licencia_obj.__dict__.get("licencia") == licencia:
@@ -277,16 +343,11 @@ async def identify_person(
             licencia_encontrada = licencia_guardada
     if licencia_encontrada is None:
         return {"Error": "Esta licencia no existe"}
-    ids_persona_asociadas = list()
-    for usuarios in DATA.get("users"):
-        if usuarios.__dict__.get("id_usuario_padre") == licencia_encontrada.get("id_usuario") or \
-                usuarios.__dict__.get("id") == licencia_encontrada.get("id_usuario"):
-            ids_persona_asociadas.append(usuarios.__dict__.get("id"))
 
     conteo_bytes_usados = 0
     for log_uso in DATA.get("log"):
         este_log = log_uso.__dict__
-        if este_log.get("id_usuario") in ids_persona_asociadas:
+        if este_log.get("id_usuario") in [licencia_encontrada.get("id_usuario")]:
             conteo_bytes_usados += este_log.get("bytes_usados")
     if conteo_bytes_usados > licencia_encontrada.get("plan_bytes"):
         return {"Error": "Ya se ha consumido el limite de bytes disponibles para esta licencia"}
@@ -295,7 +356,7 @@ async def identify_person(
     vectores_personas_conocidas = list()
     nombres_personas_conocidas = list()
     for vector in DATA.get("vector"):
-        if vector.__dict__.get("id_usuario") in ids_persona_asociadas:
+        if vector.__dict__.get("id_usuario") in [licencia_encontrada.get("id_usuario")]:
             vector_str = vector.__dict__.get("vector")
             id_vector = vector.__dict__.get("id")
             vector_matrix = aes_fr.StrToVector(vector_str)
@@ -334,7 +395,7 @@ async def identify_person(
         conteo_bytes_usados = 0
         for log_uso in DATA.get("log"):
             este_log = log_uso.__dict__
-            if este_log.get("id_usuario") in ids_persona_asociadas:
+            if este_log.get("id_usuario") in [licencia_encontrada.get("id_usuario")]:
                 conteo_bytes_usados += este_log.get("bytes_usados")
         if conteo_bytes_usados > licencia_encontrada.get("plan_bytes"):
             break

@@ -18,7 +18,21 @@ class About(BaseModel):
 about = About()
 about.name = 'API_face_recognition'
 about.version = '1.0'
-about.packages = ['']
+about.packages = [
+    'cmake',
+    'dlib',
+    'face-recognition',
+    'email-validator',
+    'mysql-connector-python',
+    'Pillow',
+    'pycrypto',
+    'pycryptodome',
+    'python-dateutil',
+    'python-multipart',
+    'uvicorn',
+    'wrapt',
+    'fastapi',
+    'pydantic']
 about.url = 'https://github.com/wisrovi/API_face_recognition'
 about.license = 'MIT'
 about.author = 'wisrovi'
