@@ -41,7 +41,7 @@ def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
     return credentials.username
 
 
-@app.get("/about", response_model=About)
+@app.get("/", response_model=About)
 async def read_about():
     return about
 

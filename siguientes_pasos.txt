@@ -13,4 +13,4 @@
 
 7) en el servicio /plan, poner en total, el restante a usar y no el maximo contratado, asi el maximo contratado sera el usado mas el total
 
-8) crear el servicio en raiz /, y aqui mostrar el /about y quitar el /about
+OK  8) crear el servicio en raiz /, y aqui mostrar el /about y quitar el /about
