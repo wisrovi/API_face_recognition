@@ -11,14 +11,18 @@ from libraries.AES_FaceRecognition import AES_FaceRecognition
 from setup import about, About
 from database.Dto.Input import RolUsuario, TipoDocumento, EmailStr
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from main import DATABASE
-from database.modelos.ObjectForm import Vector, Usuario, RelacionPersonaVector, Persona, Log, Licencia
+from database.Dao import Dao
+from database.Database import Database
+#from main import DATABASE
+#from database.modelos.ObjectForm import Vector, Usuario, RelacionPersonaVector, Persona, Log, Licencia
 from datetime import date
 
 aes_fr = AES_FaceRecognition()
 app = FastAPI()
 security = HTTPBasic()
 
+database_comando = Database()
+conexion_basedatos = Dao()
 DATA = DATABASE.copy()
 
 

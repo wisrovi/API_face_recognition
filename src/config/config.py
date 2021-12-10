@@ -9,11 +9,13 @@ FrecuenciaActualizarBaseDatosRostros = 600  # segundos
 
 BASE_DIR = str(Path(__file__).resolve().parent.parent) + "/database"
 
+
+BASEDATOS = "AES_FaceRecognition"
 DATABASE_CONECTION = {
     'user': 'root',
     'password': '12345678',
     'host': 'localhost',  # '127.0.0.1',
-    'database': 'AES_FaceRecognition',
+    'database': BASEDATOS,
     'raise_on_warnings': True
 }
 

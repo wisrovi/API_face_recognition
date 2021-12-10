@@ -1,9 +1,5 @@
 import smtplib
-
-gmail_user = 'wisrovi.rodriguez@gmail.com'
-gmail_password = 'ywmxtmeaxpgdjbhr'
-host = 'smtp.gmail.com'
-puerto = 465
+from config.config import gmail_user, gmail_password,  host, puerto
 
 
 def send_email(to, subject, message):
@@ -26,6 +22,7 @@ Subject: {subject}
         print("error to send email")
         print(e)
         return False
+
 
 
 #to = "wisrovi.rodriguez@gmail.com"
