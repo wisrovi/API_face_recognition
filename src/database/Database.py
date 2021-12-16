@@ -139,7 +139,7 @@ class RelacionPersonaVector:
         return self.base.insertar(BASEDATOS + "." + self.name_table,
                                   "id_persona, id_vector, id_persona_registra",
                                   "" + str(id_persona) + ","
-                                  "" + str(id_vector) + "," +
+                                                         "" + str(id_vector) + "," +
                                   "" + str(id_persona_registra) + "")
 
     def BUILD(self):
@@ -245,7 +245,7 @@ class Log:
         return self.base.insertar(BASEDATOS + "." + self.name_table,
                                   "id_usuario, bytes_usados, nombre_archivo",
                                   "" + str(id_usuario) + ","
-                                  "" + str(bytes_usados) + "," +
+                                                         "" + str(bytes_usados) + "," +
                                   "'" + nombre_archivo + "'")
 
     def BUILD(self):
@@ -258,18 +258,22 @@ class Log:
                 )"""
 
 
-class Vistas:
-
+class Summary:
     @staticmethod
-    def BuildSummary():
+    def Build():
         return """CREATE VIEW Summary AS
-                SELECT p.primer_nombre, p.segundo_nombre, p.primer_apellido, p.segundo_apellido, td.descripcion, p.numero_documento 
-                , u.usuario, u.password, u.email, ru.rol_usuario, l.licencia 
-                from Licencia l 
-                INNER JOIN Usuario u ON u.id = l.id_usuario 
-                INNER JOIN Persona p ON p.id = u.id_persona 
-                INNER JOIN RolUsuario ru ON ru.id = u.id_rol_usuario 
-                INNER JOIN TipoDocumento td ON td.id = p.id_tipo_documento """
+                            SELECT p.primer_nombre, p.segundo_nombre, p.primer_apellido, p.segundo_apellido, 
+                            td.descripcion AS tipo_documento, p.numero_documento 
+                            , u.usuario, u.password, u.email, ru.rol_usuario, l.licencia 
+                            from Licencia l 
+                            INNER JOIN Usuario u ON u.id = l.id_usuario 
+                            INNER JOIN Persona p ON p.id = u.id_persona 
+                            INNER JOIN RolUsuario ru ON ru.id = u.id_rol_usuario 
+                            INNER JOIN TipoDocumento td ON td.id = p.id_tipo_documento """
+
+
+class Vistas:
+    summary = Summary()
 
 
 class Database:

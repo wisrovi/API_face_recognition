@@ -59,7 +59,7 @@ class Dao:
 
         self.crear_tabla(Database.log.BUILD())
 
-        self.crear_vista(Database.vistas.BuildSummary())
+        self.crear_vista(Database.vistas.summary.Build())
 
     @staticmethod
     def ejecutar_comando_sin_respuesta(comando):
