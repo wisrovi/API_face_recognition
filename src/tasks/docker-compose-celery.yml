@@ -1,0 +1,41 @@
+version: "3.7"
+
+services:
+  rabbitmq:
+      image: rabbitmq:latest
+      environment:
+        - RABBITMQ_DEFAULT_USER=guest
+        - RABBITMQ_DEFAULT_PASS=guest
+      ports:
+        - "5672:5672"
+      hostname: rabbitmq
+
+  redis:
+      image: redis:latest
+      ports:
+        - "6379:6379"
+      #command: --dir /data --loadmodule /usr/lib/redis/modules/redistimeseries.so
+
+  redis-commander:
+      image: rediscommander/redis-commander:latest
+      environment:
+        - REDIS_HOSTS=local:redis:6379
+        - HTTP_USER=root
+        - HTTP_PASSWORD=qwerty
+      ports:
+        - "8081:8081"
+      depends_on:
+        - redis
+
+  celery-tasks:
+      build:
+          context: .
+          dockerfile: Dockerfile-celery
+      environment:
+        - BROKER_REDIS=redis://redis
+        - BROKER_RABBITMQ=amqp://guest:guest@rabbitmq:5672
+      volumes:
+          - .:/app
+      depends_on:
+          - redis
+          - rabbitmq
