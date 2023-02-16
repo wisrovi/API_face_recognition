@@ -1,4 +1,5 @@
 amqp
+numpy
 dlib==19.22.1
 face-recognition==1.3.0
 face-recognition-models==0.3.0
@@ -6,6 +7,10 @@ Pillow==8.4.0
 protobuf==3.19.1
 requests==2.26.0
 pytest-watch==4.2.0
+pytest-cov
+pylint
+flake8
+pyflakes
 celery
 black==21.12b0
 pycryptodome
