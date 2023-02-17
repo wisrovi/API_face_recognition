@@ -57,7 +57,6 @@ class TestFaceCodeAES:
         assert face_code.fingerprint != person_1["vector"]
         assert isinstance(face_code.fingerprint, str)
 
-    """
     def test_facecode_using_celery(self):
         tasks_facecode.change_max_distance.delay(0.8)
         max_distamce = tasks_facecode.get_max_distance.delay().get()
@@ -85,4 +84,3 @@ class TestFaceCodeAES:
             fingerprint, all_vectors, all_names
         ).get()
         assert result == person_know["name"]
-    """
