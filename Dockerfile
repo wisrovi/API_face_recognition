@@ -6,8 +6,8 @@ MAINTAINER wisrovi.rodriguez@gmail.com
 
 WORKDIR /app
 
-COPY requirements.txt /app/requirements.txt
+COPY src/requirements.txt /app/requirements.txt
 RUN pip3 install -r requirements.txt
 
-COPY app /app
+COPY src/app /app
 

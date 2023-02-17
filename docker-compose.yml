@@ -6,9 +6,9 @@ x-app-common:
     context: .
     dockerfile: Dockerfile
   env_file:
-    - app/.envs/app.env
+    - .envs/app.env
   volumes:
-    - ./app:/app
+    - ./src/app:/app
   networks:
     - face_recognition_network
 
@@ -16,7 +16,7 @@ services:
   sidecar:
     <<: *app-common
     volumes:
-      - ./app:/app
+      - ./src/app:/app
       # Extend homes to preserve bash and python history (DX)
       - app-roothome:/root
 
