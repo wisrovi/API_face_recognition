@@ -4,9 +4,8 @@ from pathlib import Path
 MESSAGES_LOG_VIEW = logging.DEBUG
 BASE_DIR = str(Path(__file__).resolve().parent.parent) + "/database"
 
-
 """
-            Configuracion del loggin
+        Configuracion del loggin
 """
 import logging
 from colorlog import ColoredFormatter

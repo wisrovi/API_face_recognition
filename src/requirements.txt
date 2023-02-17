@@ -1,8 +1,5 @@
 amqp
-<<<<<<< HEAD
-=======
 numpy
->>>>>>> master
 dlib==19.22.1
 face-recognition==1.3.0
 face-recognition-models==0.3.0
@@ -10,13 +7,10 @@ Pillow==8.4.0
 protobuf==3.19.1
 requests==2.26.0
 pytest-watch==4.2.0
-<<<<<<< HEAD
-=======
 pytest-cov
 pylint
 flake8
 pyflakes
->>>>>>> master
 celery
 black==21.12b0
 pycryptodome
@@ -27,8 +21,4 @@ djangorestframework==3.12.4
 djangorestframework-simplejwt==4.8.0
 django-model-utils==4.1.1
 redis
-<<<<<<< HEAD
 Pillow
-=======
-Pillow
->>>>>>> master

@@ -1,3 +1,14 @@
+"""
+---------------------------------------
+| LAYER 0
+| library: face_recognition
+| version: 1.3.0
+| this library is used for convert image to vector
+| and compare vectors for to identify person and verify
+| if the person exists in the database (list of vectors)
+---------------------------------------
+"""
+
 import face_recognition
 import numpy as np
 
@@ -34,7 +45,9 @@ class FaceRecognition:
                 self.get_face_code()
 
     def compare(
-            self, all_face_vectors: list[np.ndarray], all_names_of_vectors: list[str]
+        self,
+        all_face_vectors: list[np.ndarray],
+        all_names_of_vectors: list[str],
     ):
         result_compare = face_recognition.compare_faces(
             all_face_vectors, self.vector, self.max_distance

@@ -1,5 +1,16 @@
-from app.shared.FaceRecognition.CriptVectorPerson import CriptVectorPerson
-from app.shared.FaceRecognition.FaceRecognition import FaceRecognition
+"""
+---------------------------------------
+| LAYER 1
+| library: facecode_aes
+| version: 1.0.0
+| this library is used for convert vector to string (with AES)
+| and convert string to vector (with AES)
+| and use LAYER 0 (face_recognition)
+---------------------------------------
+"""
+
+from .CriptVectorPerson import CriptVectorPerson
+from .FaceRecognition import FaceRecognition
 
 
 class Facecode_AES(FaceRecognition):
@@ -32,6 +43,10 @@ class Facecode_AES(FaceRecognition):
     @property
     def fingerprint(self):
         return self.cript.VectorToString(self.vector)
+
+    @fingerprint.setter
+    def fingerprint(self, vector: str):
+        self.vector = self.cript.StringToVector(vector)
 
     def compare_fingerprints(
             self, all_face_vectors: list[str], all_names_of_vectors: list[str]

@@ -1,8 +1,13 @@
-from io import BytesIO
+from shared.FaceRecognition.FaceRecognition import FaceRecognition
+from shared.FaceRecognition.Facecode_AES import Facecode_AES
+from shared.Image import Image
 
-from app.shared.FaceRecognition.FaceRecognition import FaceRecognition
-from app.shared.FaceRecognition.Facecode_AES import Facecode_AES
-from app.shared.Image import Image
+# from tasks import TasksFacecode
+
+image = Image()
+
+
+# tasks_facecode = TasksFacecode()
 
 
 class TestFaceCodeAES:
@@ -22,7 +27,6 @@ class TestFaceCodeAES:
         face_code = Facecode_AES(max_distance=0.9)
 
         face_code.path = "/app/test/resources/robert_1.jpg"
-        buffer = BytesIO()
         person_1 = {"name": "Robert", "vector": face_code.fingerprint}
 
         all_vectors = [person_1["vector"]]
@@ -37,9 +41,10 @@ class TestFaceCodeAES:
 
     def test_facecode_pillow(self):
         face_code = Facecode_AES(max_distance=0.9)
-        image = Image()
 
-        buffer_image = image.put_image_in_buffer("/app/test/resources/robert_1.jpg")
+        buffer_image = image.put_image_in_buffer(
+            "/app/test/resources/robert_1.jpg"
+        )
         face_code.path = buffer_image
 
         person_1 = {"name": "Robert", "vector": face_code.fingerprint}
@@ -54,6 +59,29 @@ class TestFaceCodeAES:
         assert face_code.fingerprint != person_1["vector"]
         assert isinstance(face_code.fingerprint, str)
 
+    """
     def test_facecode_using_celery(self):
-        pass
-        assert True
+        tasks_facecode.change_max_distance.delay(0.8)
+        max_distamce = tasks_facecode.get_max_distance.delay().get()
+        assert max_distamce == 0.8
+
+        buffer_image = image.put_image_in_buffer(
+            "/app/test/resources/robert_1.jpg")
+        fingerprint = tasks_facecode.buffer_to_vector(buffer_image)
+        assert isinstance(fingerprint, str)
+
+        person_know = {"name": "Robert", "vector": fingerprint}
+
+        all_vectors = [person_know["vector"]]
+        all_names = [person_know["name"]]
+
+        buffer_image = image.put_image_in_buffer(
+            "/app/test/resources/robert_2.jpg")
+        fingerprint = tasks_facecode.buffer_to_vector(buffer_image)
+
+        tasks_facecode.change_max_distance.delay(0.85)
+        return
+        # result = tasks_facecode.compare_vectors.delay(
+            fingerprint, all_vectors, all_names).get()
+        # assert result == person_know["name"]
+    """

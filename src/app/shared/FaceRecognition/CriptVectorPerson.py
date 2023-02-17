@@ -1,6 +1,6 @@
 import numpy as np
 
-from app.shared.FaceRecognition.AESCipher import AESCipher
+from shared.FaceRecognition.AESCipher import AESCipher
 
 
 class CriptVectorPerson(AESCipher):
