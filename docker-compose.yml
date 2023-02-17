@@ -8,7 +8,7 @@ x-app-common:
   env_file:
     - .envs/app.env
   volumes:
-    - ./src/app:/app
+    - ./src:/app
   networks:
     - face_recognition_network
 
@@ -16,7 +16,7 @@ services:
   sidecar:
     <<: *app-common
     volumes:
-      - ./src/app:/app
+      - ./src:/app
       # Extend homes to preserve bash and python history (DX)
       - app-roothome:/root
 

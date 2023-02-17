@@ -1,13 +1,11 @@
 from shared.FaceRecognition.FaceRecognition import FaceRecognition
 from shared.FaceRecognition.Facecode_AES import Facecode_AES
 from shared.Image import Image
-
-# from tasks import TasksFacecode
+from tasks import TasksFacecode
 
 image = Image()
 
-
-# tasks_facecode = TasksFacecode()
+tasks_facecode = TasksFacecode()
 
 
 class TestFaceCodeAES:
@@ -66,7 +64,8 @@ class TestFaceCodeAES:
         assert max_distamce == 0.8
 
         buffer_image = image.put_image_in_buffer(
-            "/app/test/resources/robert_1.jpg")
+            "/app/test/resources/robert_1.jpg"
+        )
         fingerprint = tasks_facecode.buffer_to_vector(buffer_image)
         assert isinstance(fingerprint, str)
 
@@ -76,12 +75,14 @@ class TestFaceCodeAES:
         all_names = [person_know["name"]]
 
         buffer_image = image.put_image_in_buffer(
-            "/app/test/resources/robert_2.jpg")
+            "/app/test/resources/robert_2.jpg"
+        )
         fingerprint = tasks_facecode.buffer_to_vector(buffer_image)
 
         tasks_facecode.change_max_distance.delay(0.85)
         return
-        # result = tasks_facecode.compare_vectors.delay(
-            fingerprint, all_vectors, all_names).get()
-        # assert result == person_know["name"]
+        result = tasks_facecode.compare_vectors.delay(
+            fingerprint, all_vectors, all_names
+        ).get()
+        assert result == person_know["name"]
     """

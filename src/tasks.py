@@ -21,7 +21,7 @@ if not redis_url:
 broker_url = "amqp://localhost" if not broker_url else broker_url
 redis_url = "redis://localhost" if not redis_url else redis_url
 
-app = Celery('tasks', broker=broker_url, backend=redis_url)
+app = Celery("tasks", broker=broker_url, backend=redis_url)
 app.conf.update(
     result_expires=3600,
 )
@@ -63,6 +63,7 @@ class TasksFacecode:
     def compare_vectors(vector, vectors, names, organization_id=None):
         face_code.fingerprint = vector
         return face_code.compare_fingerprints(vectors, names)
+
 
 # crear tarea para comparar un vector con una lista de vectores
 
