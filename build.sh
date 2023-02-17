@@ -1,1 +1,0 @@
-docker build -t face_recognition_api:V1.0 .
