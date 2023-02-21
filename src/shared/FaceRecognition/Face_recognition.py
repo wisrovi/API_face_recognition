@@ -13,7 +13,7 @@ import face_recognition
 import numpy as np
 
 
-class FaceRecognition:
+class Face_recognition:
     vector: np.ndarray
 
     def __init__(self, image_path: str = None, max_distance: float = 0.6):

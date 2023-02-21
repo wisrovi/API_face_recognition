@@ -10,15 +10,15 @@
 """
 
 from .CriptVectorPerson import CriptVectorPerson
-from .FaceRecognition import FaceRecognition
+from .Face_recognition import Face_recognition
 
 
-class Facecode_AES(FaceRecognition):
+class Facecode_AES(Face_recognition):
     def __init__(
-            self,
-            image_path: str = None,
-            max_distance: float = 0.6,
-            secret_key_aes: str = "secret",
+        self,
+        image_path: str = None,
+        max_distance: float = 0.6,
+        secret_key_aes: str = "secret",
     ):
         super().__init__(image_path, max_distance)
         self.cript = CriptVectorPerson(secret_key_aes)
@@ -49,7 +49,7 @@ class Facecode_AES(FaceRecognition):
         self.vector = self.cript.StringToVector(vector)
 
     def compare_fingerprints(
-            self, all_face_vectors: list[str], all_names_of_vectors: list[str]
+        self, all_face_vectors: list[str], all_names_of_vectors: list[str]
     ):
         all_vectors = [self.cript.StringToVector(i) for i in all_face_vectors]
         result_compare = self.compare(all_vectors, all_names_of_vectors)

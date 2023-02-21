@@ -5,7 +5,7 @@
 | version: 1.0.0
 | this library is used LAYER 1 (facecode_aes)
 | but the database is in postgres
-| filtering by name of organization
+| filtering by first_name of organization
 ---------------------------------------
 | LAYER 1
 | library: facecode_aes

@@ -1,22 +1,21 @@
 import logging
 from pathlib import Path
 
+from colorlog import ColoredFormatter
+
 MESSAGES_LOG_VIEW = logging.DEBUG
 BASE_DIR = str(Path(__file__).resolve().parent.parent) + "/database"
 
 """
         Configuracion del loggin
 """
-import logging
-from colorlog import ColoredFormatter
 
 name_log = "logProject.txt"
-formato = """
- > %(asctime)s - [%(levelname)s] 
-|> [Function: %(funcName)s] 
+formato = """ > %(asctime)s - [%(levelname)s]
+|> [Function: %(funcName)s]
 |> [Line: %(lineno)d]
 |> [Module: %(module)s]
-|> [Process:%(process)d] - [%(threadName)s] 
+|> [Process:%(process)d] - [%(threadName)s]
 |> %(message)s |"""
 stream = logging.StreamHandler()
 formatter = ColoredFormatter(
