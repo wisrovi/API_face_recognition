@@ -23,3 +23,9 @@ djangorestframework-simplejwt==4.8.0
 django-model-utils==4.1.1
 redis==4.5.1
 Pillow==8.4.0
+
+keras==2.9.0
+Keras-Applications==1.0.8
+keras-vggface @ git+https://github.com/M-Taghizadeh/keras-vggface.git@3d2fb52c316ed1de399c05ac83678f1bb7b8a43b
+opencv-python==4.8.0.74
+tensorflow==2.9.3
