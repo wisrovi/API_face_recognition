@@ -1,0 +1,9 @@
+> 2023-08-10 19:50:02 - INFO - [mariadb.py:89] - 2023-08-10 19:50:02 - Method: save_fingerprints | Args: ('new_fingerprint', 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0030 seconds
+> 2023-08-10 19:50:02 - INFO - [mariadb.py:89] - 2023-08-10 19:50:02 - Method: save_fingerprints | Args: (['fingerprint1', 'fingerprint2', 'fingerprint3'], 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0031 seconds
+> 2023-08-10 19:50:02 - INFO - [mariadb.py:89] - 2023-08-10 19:50:02 - Method: read_fingerprints | Args: ('My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0041 seconds
+> 2023-08-10 21:31:30 - INFO - [FingerprintDatabase.py:76] - 2023-08-10 21:31:30 - Method: save_fingerprints | Args: ('new_fingerprint', 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0032 seconds
+> 2023-08-10 21:31:30 - INFO - [FingerprintDatabase.py:76] - 2023-08-10 21:31:30 - Method: save_fingerprints | Args: (['fingerprint1', 'fingerprint2', 'fingerprint3'], 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0031 seconds
+> 2023-08-10 21:31:30 - INFO - [FingerprintDatabase.py:76] - 2023-08-10 21:31:30 - Method: read_fingerprints | Args: ('My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0041 seconds
+> 2023-08-10 21:38:55 - INFO - [FingerprintDatabase.py:76] - 2023-08-10 21:38:55 - Method: read_fingerprints | Args: ('My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0046 seconds
+> 2023-08-10 21:39:35 - INFO - [FingerprintDatabase.py:76] - 2023-08-10 21:39:35 - Method: read_fingerprints | Args: ('My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0045 seconds
+> 2023-08-10 21:39:35 - INFO - [FingerprintDatabase.py:76] - 2023-08-10 21:39:35 - Method: export_database_to_dataframe | Args: ('My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0052 seconds

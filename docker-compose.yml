@@ -5,12 +5,11 @@ x-app-common:
   build:
     context: .
     dockerfile: Dockerfile
+  command: tail -f /dev/null
   env_file:
     - .envs/app.env
   volumes:
     - ./src:/app
-  networks:
-    - face_recognition_network
 
 services:
   sidecar:
@@ -22,25 +21,33 @@ services:
     ports:
       - "1722:1722"
 
-  postgres:
-    image: postgres:13.2
-    ports:
-      - "5432:5432"
-    env_file:
-      - ./.envs/.postgres
-      - ./.envs/app.env
+  mariaDB:     
+    image: mariadb
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - MYSQL_USER=fingerprint_FC_db
+      - MYSQL_PASSWORD=secret_fingerprint_password
+      - MYSQL_DATABASE=fingerprintdb
     volumes:
-      - postgres:/var/lib/postgresql/data
-    networks:
-      - face_recognition_network
+      - ../mariadb:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "--silent" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    restart: always
 
-
-
-networks:
-  face_recognition_network:
-    driver: bridge
+  web_mariaDB:
+    image: phpmyadmin
+    ports:
+      - "3306:80"
+    environment:
+      - PMA_HOST=mariaDB
+      - PMA_PORT=3306
+    depends_on:
+      - mariaDB
+    restart: always
 
 volumes:
-  postgres:
   app-apphome:
   app-roothome:

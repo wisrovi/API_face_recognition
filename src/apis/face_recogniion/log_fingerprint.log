@@ -1,0 +1,35 @@
+2023-08-10 17:18:55,222 - INFO - 2023-08-10 17:18:55 - Method: save_fingerprints | Args: ('new_fingerprint', 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0127 seconds
+2023-08-10 17:18:55,233 - INFO - 2023-08-10 17:18:55 - Method: save_fingerprints | Args: (['fingerprint1', 'fingerprint2', 'fingerprint3'], 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0103 seconds
+2023-08-10 17:18:55,244 - INFO - 2023-08-10 17:18:55 - Method: read_fingerprints | Args: ('My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0103 seconds
+2023-08-10 17:20:40,142 - INFO - 2023-08-10 17:20:40 - Method: save_fingerprints | Args: ('new_fingerprint', 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0058 seconds
+2023-08-10 17:20:40,146 - INFO - 2023-08-10 17:20:40 - Method: save_fingerprints | Args: (['fingerprint1', 'fingerprint2', 'fingerprint3'], 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0037 seconds
+2023-08-10 17:20:40,152 - INFO - 2023-08-10 17:20:40 - Method: read_fingerprints | Args: ('My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0057 seconds
+2023-08-10 17:22:31,516 - INFO - 2023-08-10 17:22:31 - Method: save_fingerprints | Args: ('new_fingerprint', 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0040 seconds
+2023-08-10 17:22:31,520 - INFO - 2023-08-10 17:22:31 - Method: save_fingerprints | Args: (['fingerprint1', 'fingerprint2', 'fingerprint3'], 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0034 seconds
+2023-08-10 17:22:31,524 - INFO - 2023-08-10 17:22:31 - Method: read_fingerprints | Args: ('My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0044 seconds
+2023-08-10 17:23:27,928 - INFO - 2023-08-10 17:23:27 - Method: save_fingerprints | Args: ('new_fingerprint', 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0045 seconds
+2023-08-10 17:23:27,931 - INFO - 2023-08-10 17:23:27 - Method: save_fingerprints | Args: (['fingerprint1', 'fingerprint2', 'fingerprint3'], 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0030 seconds
+2023-08-10 17:23:27,936 - INFO - 2023-08-10 17:23:27 - Method: read_fingerprints | Args: ('My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0042 seconds
+2023-08-10 17:23:39,356 - INFO - 2023-08-10 17:23:39 - Method: save_fingerprints | Args: ('new_fingerprint', 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0044 seconds
+2023-08-10 17:23:39,359 - INFO - 2023-08-10 17:23:39 - Method: save_fingerprints | Args: (['fingerprint1', 'fingerprint2', 'fingerprint3'], 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0033 seconds
+2023-08-10 17:23:39,364 - INFO - 2023-08-10 17:23:39 - Method: read_fingerprints | Args: ('My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0049 seconds
+2023-08-10 17:23:41,144 - INFO - 2023-08-10 17:23:41 - Method: save_fingerprints | Args: ('new_fingerprint', 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0042 seconds
+2023-08-10 17:23:41,147 - INFO - 2023-08-10 17:23:41 - Method: save_fingerprints | Args: (['fingerprint1', 'fingerprint2', 'fingerprint3'], 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0028 seconds
+2023-08-10 17:23:41,151 - INFO - 2023-08-10 17:23:41 - Method: read_fingerprints | Args: ('My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0040 seconds
+2023-08-10 17:23:42,697 - INFO - 2023-08-10 17:23:42 - Method: save_fingerprints | Args: ('new_fingerprint', 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0039 seconds
+2023-08-10 17:23:42,700 - INFO - 2023-08-10 17:23:42 - Method: save_fingerprints | Args: (['fingerprint1', 'fingerprint2', 'fingerprint3'], 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0031 seconds
+2023-08-10 17:23:42,705 - INFO - 2023-08-10 17:23:42 - Method: read_fingerprints | Args: ('My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0049 seconds
+2023-08-10 19:33:20,576 - INFO - 2023-08-10 19:33:20 - Method: save_fingerprints | Args: ('new_fingerprint', 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0247 seconds
+2023-08-10 19:33:20,587 - INFO - 2023-08-10 19:33:20 - Method: save_fingerprints | Args: (['fingerprint1', 'fingerprint2', 'fingerprint3'], 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0107 seconds
+2023-08-10 19:33:20,599 - INFO - 2023-08-10 19:33:20 - Method: read_fingerprints | Args: ('My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0112 seconds
+2023-08-10 19:36:45,571 - ERROR - 2023-08-10 19:36:45 - Method: save_fingerprints | Args: ('new_fingerprint', 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0035 seconds | Error: (mysql.connector.errors.IntegrityError) 1062 (23000): Duplicate entry 'My Company-Group A-new_fingerprint' for key '_company_group_fingerprint_uc'
+[SQL: INSERT INTO fingerprint_entries (fingerprint, company, `group`) VALUES (%(fingerprint)s, %(company)s, %(group)s)]
+[parameters: {'fingerprint': 'new_fingerprint', 'company': 'My Company', 'group': 'Group A'}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2023-08-10 19:39:28,072 - ERROR - 2023-08-10 19:39:28 - Method: save_fingerprints | Args: ('new_fingerprint', 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0032 seconds | Error: name 'IntegrityError' is not defined
+2023-08-10 19:39:46,248 - INFO - 2023-08-10 19:39:46 - Method: save_fingerprints | Args: ('new_fingerprint', 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0038 seconds
+2023-08-10 19:39:46,252 - INFO - 2023-08-10 19:39:46 - Method: save_fingerprints | Args: (['fingerprint1', 'fingerprint2', 'fingerprint3'], 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0039 seconds
+2023-08-10 19:39:46,257 - INFO - 2023-08-10 19:39:46 - Method: read_fingerprints | Args: ('My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0047 seconds
+2023-08-10 19:39:54,658 - INFO - 2023-08-10 19:39:54 - Method: save_fingerprints | Args: ('new_fingerprint', 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0036 seconds
+2023-08-10 19:39:54,663 - INFO - 2023-08-10 19:39:54 - Method: save_fingerprints | Args: (['fingerprint1', 'fingerprint2', 'fingerprint3'], 'My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0046 seconds
+2023-08-10 19:39:54,667 - INFO - 2023-08-10 19:39:54 - Method: read_fingerprints | Args: ('My Company', 'Group A') | Kwargs: {} | Execution Time: 0.0040 seconds
