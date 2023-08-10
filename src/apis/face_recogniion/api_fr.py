@@ -280,4 +280,13 @@ async def face_vs_faces(image: Union[UploadFile, List[UploadFile]] = File(...),
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
+    import multiprocessing
+
+    uvicorn_options = {
+        "host": "0.0.0.0",
+        "port": 8000,
+        "reload": True,
+        "workers": multiprocessing.cpu_count() * 2 + 1,  # Asegura que haya suficientes trabajadores
+    }
+
+    uvicorn.run(app, **uvicorn_options)
