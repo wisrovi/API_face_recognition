@@ -1,121 +1,140 @@
-from typing import Union, List, Tuple
-from contextlib import contextmanager
-from sqlalchemy import create_engine, Column, String, Integer
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+import __main__
+from typing import Union
 
-Base = declarative_base()
+from .State import State
 
-class FingerprintEntry(Base):
+
+class Machine:
     """
-    Represents a fingerprint entry in the database.
+    State machine.
     """
-    __tablename__ = 'fingerprint_entries'
 
-    id = Column(Integer, primary_key=True)
-    fingerprint = Column(String)
-    company = Column(String)
-    group = Column(String)
+    def __init__(self, state: list, initial: str, tabular=""):
+        """
+        States must be a dictionary, initial must be the first state.
 
-class FingerprintDatabase:
-    """
-    Provides methods for interacting with a fingerprint database.
-    """
-    def __init__(self, host: str, user: str, password: str, database: str):
-        """
-        Initializes a new instance of FingerprintDatabase.
+        @type state: list[State]
+        @param state: list of states.
 
-        :param host (str): The database host.
-        :param user (str): The database user.
-        :param password (str): The database password.
-        :param database (str): The name of the database.
+        @type initial: str
+        @param initial: initial state, expressed as a string.
         """
-        self.db_url = f"mysql+mysqlconnector://{user}:{password}@{host}/{database}"
-        self.engine = create_engine(self.db_url)
-        Base.metadata.create_all(self.engine)
-        self.Session = sessionmaker(bind=self.engine)
 
-    @contextmanager
-    def session_scope(self):
-        """
-        A context manager that provides a session scope for database operations.
-        """
-        session = self.Session()
-        try:
-            yield session
-            session.commit()
-        except Exception as e:
-            session.rollback()
-            raise e
-        finally:
-            session.close()
+        self.state = self.initialize(state)
+        self.current = self.state[initial]
+        self.tabular = tabular
 
-    def save_fingerprints(self, fingerprints: Union[str, List[str]], company: str, group: str) -> Union[int, List[int]]:
+    def get_state(self) -> State:
         """
-        Saves fingerprints to the database.
+        Returns the current state.
 
-        :param fingerprints (Union[str, List[str]]): A single fingerprint or a list of fingerprints.
-        :param company (str): The company name.
-        :param group (str): The group name.
-        :return (Union[int, List[int]]): The ID of the inserted record or a list of IDs for multiple inserts.
+        @rtype: State
+        @returns: current state.
         """
-        with self.session_scope() as session:
-            if isinstance(fingerprints, str):
-                fingerprints = [fingerprints]
-            
-            inserted_ids = []
-            for fingerprint in fingerprints:
-                new_entry = FingerprintEntry(fingerprint=fingerprint, company=company, group=group)
-                session.add(new_entry)
-                session.flush()
-                inserted_ids.append(new_entry.id)
-            
-            if len(inserted_ids) == 1:
-                return inserted_ids[0]
+
+        return self.current
+
+    def set_state(self, this_state: str):
+        """
+        Sets the current state.
+        """
+
+        self.current = self.state[this_state]
+
+    def get_next_state(self) -> State:
+        """
+        Returns the next state.
+        """
+
+        next_state = self.current.next_state
+
+        if next_state:
+            if next_state in self.state:
+                return self.state[self.current.next_state]
             else:
-                return inserted_ids
+                print(
+                    f"{self.tabular}[{__main__.__file__}]: next state: "
+                    + f"{next_state}, does not exist!!!"
+                )
 
-    def read_fingerprints(self, company: str, group: str) -> Tuple[List[str], List[int]]:
+                return None
+
+        return None
+
+    def to_next_state(self):
         """
-        Reads fingerprints from the database.
-
-        :param company (str): The company name.
-        :param group (str): The group name.
-        :return (Tuple[List[str], List[int]]): A tuple containing a list of fingerprints and a list of table IDs.
+        Sets the current state to the next state.
         """
-        with self.session_scope() as session:
-            filtered_entries = session.query(FingerprintEntry).filter_by(company=company, group=group).all()
-            
-            table_ids = [entry.id for entry in filtered_entries]
-            fingerprints = [entry.fingerprint for entry in filtered_entries]
-            
-            return fingerprints, table_ids
 
+        self.current = self.get_next_state()
 
+    @staticmethod
+    def initialize(state: Union[list, dict]) -> dict:
+        """
+        It receives a list of States and converts it to a dictionary
+        with the name and instantiated object of the class.
 
-# Example usage
-if __name__ == "__main__":
-    fingerprint_db = FingerprintDatabase(host="localhost", user="your_user", password="your_password", database="your_database")
-    
-    # Example data for Company A
-    company_a_fingerprints = ["fingerprint1", "fingerprint2", "fingerprint3"]
-    company_a_group = "Group A"
-    
-    inserted_id_a = fingerprint_db.save_fingerprints(company_a_fingerprints, "Company A", company_a_group)
-    print("Inserted IDs for Company A:", inserted_id_a)
-    
-    # Example data for Company B
-    company_b_fingerprints = ["fingerprint4", "fingerprint5"]
-    company_b_group = "Group B"
-    
-    inserted_id_b = fingerprint_db.save_fingerprints(company_b_fingerprints, "Company B", company_b_group)
-    print("Inserted IDs for Company B:", inserted_id_b)
-    
-    fingerprints_a, table_ids_a = fingerprint_db.read_fingerprints("Company A", company_a_group)
-    print("Fingerprints for Company A:", fingerprints_a)
-    print("Table IDs for Company A:", table_ids_a)
-    
-    fingerprints_b, table_ids_b = fingerprint_db.read_fingerprints("Company B", company_b_group)
-    print("Fingerprints for Company B:", fingerprints_b)
-    print("Table IDs for Company B:", table_ids_b)
+        @type state: list[State] or dict
+        @param state: list or data dictionary.
 
+        @rtype: dict
+        @returns: dictionary with the name and instantiated
+        object of the class.
+        """
+
+        if isinstance(state, dict):
+            return state
+
+        if isinstance(state, list):
+            proper_states = {}
+
+            for i, sta in enumerate(state):
+                sta.number = i
+                proper_states[sta.name] = sta
+
+            return proper_states
+
+        insiders = dict()
+
+        for sta in state:
+            name = sta.name
+            insiders[name] = sta
+
+        return insiders
+
+    def execute(self, **kwargs: dict) -> dict:
+        """
+        Executes the current state and goes to the next one.
+
+        @type kwargs: dict
+        @param kwargs: dictionary with the data to be processed.
+
+        @rtype: dict
+        @returns: dictionary with the processed data.
+        """
+
+        return self.current(**kwargs)
+
+    def cicle(self, **kwargs: dict) -> dict:
+        """
+        It loops through each of the states, executes them,
+        until the next one is None.
+
+        @type kwargs: dict
+        @param kwargs: dictionary with the data to be processed.
+
+        @rtype: dict
+        @returns: dictionary with the processed data.
+        """
+
+        while self.current is not None:
+            try:
+                kwargs = self.execute(**kwargs)
+            except Exception as e:
+                kwargs["error"] = e
+                print(f"{self.tabular}[{__main__.__file__}]: Error: {e}")
+                break
+
+            self.to_next_state()
+
+        return kwargs

@@ -32,3 +32,6 @@ sidecar-bash:
 
 app-requeriments:
 	docker-compose run --rm sidecar pip freeze > src/requirements.txt
+
+logs-api:
+	docker-compose logs -f api

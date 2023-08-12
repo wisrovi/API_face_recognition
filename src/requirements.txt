@@ -7,7 +7,7 @@ requests==2.26.0
 black==21.12b0
 pycryptodome==3.17
 crypto==1.4.1
-opencv-python
+opencv-python==4.8.0.74
 slugify
 matplotlib
 

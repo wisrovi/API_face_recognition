@@ -25,7 +25,7 @@ class Facecode_AES(Face_recognition):
         self.cript = CriptVectorPerson(secret_key_aes)
 
     @property
-    def distance(self):
+    def distance(self) -> float:
         return self.max_distance
 
     @distance.setter
@@ -33,7 +33,7 @@ class Facecode_AES(Face_recognition):
         self.max_distance = max_distance
 
     @property
-    def path(self):
+    def path(self) -> str:
         return self.image_path
 
     @path.setter
@@ -42,11 +42,11 @@ class Facecode_AES(Face_recognition):
         self.setup()
 
     @property
-    def fingerprint(self):
+    def fingerprint(self) -> str:
         try:
             return self.cript.VectorToString(self.vector)
         except AttributeError:
-            return None        
+            return None
 
     @fingerprint.setter
     def fingerprint(self, vector: str):
@@ -54,16 +54,19 @@ class Facecode_AES(Face_recognition):
 
     def compare_fingerprints(
         self, all_face_vectors: List[str], all_names_of_vectors: List[str]
-    ):
+    ) -> List[str]:
         if len(all_face_vectors) != len(all_names_of_vectors):
-            raise ValueError("The length of the vectors and names must be the same")
-        
+            raise ValueError(
+                "The vectors and names must have the same length",
+            )
+
         if len(all_face_vectors) == 0:
             return None
-        
+
         if None in all_face_vectors:
             raise ValueError("None value in all_face_vectors")
-        
+
         all_vectors = [self.cript.StringToVector(i) for i in all_face_vectors]
         result_compare = self.compare(all_vectors, all_names_of_vectors)
+
         return result_compare
