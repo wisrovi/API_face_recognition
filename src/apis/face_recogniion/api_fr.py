@@ -419,73 +419,169 @@ def home():
         </a>
     </header>
 
+
+<br/>
+<br/>
+<br/>
+
+
     <h2>Prueba de Servicios POST</h2>
 
-    <h3>1. Comparar Huellas Dactilares con Base de Datos</h3>
-    <form action="/fingerprint_vs_database" method="post">
-        Fingerprint:
-        <input type="text" name="fingerprints" class="form-control"><br>
-        Company:
-        <input type="text" name="company" class="form-control"><br>
-        Group:
-          <input type="text" name="group" class="form-control"><br>
-        <button type="submit" class="btn btn-primary">Enviar</button>
-    </form>
+    
 
-    <h3>2. Comparar Rostros con Base de Datos</h3>
-    <form action="/faces_vs_database" method="post" enctype="multipart/form-data">
-        Image:
-        <input type="file" name="images" multiple class="form-control-file"><br>
-        Company:
-        <input type="text" name="company" class="form-control"><br>
-        Group:
-        <input type="text" name="group" class="form-control"><br>
-        <button type="submit" class="btn btn-primary">Enviar</button>
-    </form>
 
-    <h3>3. Comparar Rostro con Huella Dactilar</h3>
-    <form action="/face_vs_fingerprint" method="post" enctype="multipart/form-data">
-        Image:
-        <input type="file" name="images" multiple class="form-control-file"><br>
-        Fingerprint(s):
-        <input type="text" name="fingerprints" class="form-control"><br>
-        <button type="submit" class="btn btn-primary">Enviar</button>
-    </form>
+<br/>
+<br/>
+<br/>
+    
 
-    <h3>4. Comparar Huella Dactilar con Huella Dactilar</h3>
-    <form action="/fingerprint_vs_fingerprint" method="post">
-        Fingerprint 1:
-        <input type="text" name="fingerprint1" class="form-control"><br>
-        Fingerprint 2:
-        <input type="text" name="fingerprint2" class="form-control"><br>
-        <button type="submit"
-        class="btn btn-primary">Enviar</button>
-    </form>
+<div class="card-group">
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-body">
 
-    <h3>5. Comparar Rostro con Rostros</h3>
-    <form action="/face_vs_face" method="post" enctype="multipart/form-data">
-        Image:
-        <input type="file" name="images1" multiple class="form-control-file"><br>
-        Image:
-        <input type="file" name="images2" multiple class="form-control-file"><br>
-        <button type="submit" class="btn btn-primary">Enviar</button>
-    </form>
+                <h3>0. Hallar Huella Dactilar con opcion de guardar en base de dato</h3>
+                <form action="/faces_to_fingerprint"
+                    method="post" enctype="multipart/form-data">
+                    Faces:
+                    <input type="file" name="faces" multiple class="form-control-file"><br>
 
-    <h3>0. Hallar Huella Dactilar con opcion de guardar en base de dato</h3>
-    <form action="/faces_to_fingerprint"
-        method="post" enctype="multipart/form-data">
-        Faces:
-        <input type="file" name="faces" multiple class="form-control-file"><br>
+                    Company:
+                    <input type="text" name="company" class="form-control"><br>
+                    Group:
+                    <input type="text" name="group" class="form-control"><br>
+                    Save in database:
+                    <input type="checkbox" name="save_db" value="True"><br>
 
-        Company:
-        <input type="text" name="company" class="form-control"><br>
-        Group:
-        <input type="text" name="group" class="form-control"><br>
-        Save in database:
-          <input type="checkbox" name="save_db" value="True"><br>
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </form>
 
-        <button type="submit" class="btn btn-primary">Enviar</button>
-    </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-body">
+
+                <h3>5. Comparar Rostro con Rostros</h3>
+                <form action="/face_vs_face" method="post" enctype="multipart/form-data">
+                    Image:
+                    <input type="file" name="images1" multiple class="form-control-file"><br>
+                    Image:
+                    <input type="file" name="images2" multiple class="form-control-file"><br>
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<br/>
+<br/>
+<br/>
+
+<div class="row">
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-body">
+
+                <h3>4. Comparar Huella Dactilar con Huella Dactilar</h3>
+                <form action="/fingerprint_vs_fingerprint" method="post">
+                    Fingerprint 1:
+                    <input type="text" name="fingerprint1" class="form-control"><br>
+                    Fingerprint 2:
+                    <input type="text" name="fingerprint2" class="form-control"><br>
+                    <button type="submit"
+                    class="btn btn-primary">Enviar</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-body">
+
+                <h3>1. Comparar Huellas Dactilares con Base de Datos</h3>
+                <form action="/fingerprint_vs_database" method="post">
+                    Fingerprint:
+                    <input type="text" name="fingerprints" class="form-control"><br>
+                    Company:
+                    <input type="text" name="company" class="form-control"><br>
+                    Group:
+                    <input type="text" name="group" class="form-control"><br>
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </form>
+
+            </div>
+        </div>
+    </div>  
+</div>
+
+<br/>
+<br/>
+<br/>
+
+<div class="card-group">
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-body">
+
+                <h3>3. Comparar Rostro con Huella Dactilar</h3>
+                <form action="/face_vs_fingerprint" method="post" enctype="multipart/form-data">
+                    Image:
+                    <input type="file" name="images" multiple class="form-control-file"><br>
+                    Fingerprint(s):
+                    <input type="text" name="fingerprints" class="form-control"><br>
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-body">
+
+                <h3>2. Comparar Rostros con Base de Datos</h3>
+                <form action="/faces_vs_database" method="post" enctype="multipart/form-data">
+                    Image:
+                    <input type="file" name="images" multiple class="form-control-file"><br>
+                    Company:
+                    <input type="text" name="company" class="form-control"><br>
+                    Group:
+                    <input type="text" name="group" class="form-control"><br>
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<br/>
+<br/>
+<br/>
+
+
+    
+
+    
+
+    
+
+    
+
+
+
+    
 
     <footer>
         <p>&copy; 2023 William Rodriguez. Todos los derechos reservados.

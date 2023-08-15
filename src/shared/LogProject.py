@@ -6,6 +6,7 @@ from colorlog import ColoredFormatter
 
 MESSAGES_LOG_VIEW = logging.DEBUG
 BASE_DIR = str(Path(__file__).resolve().parent.parent) + "/logs/"
+BASE_DIR = "/logs"
 os.makedirs(BASE_DIR, exist_ok=True)
 
 """
@@ -107,7 +108,7 @@ def logger_build(path: str = "", file_log: str = 'app.log') -> logging.Logger:
     file_debug_handler.addFilter(DebugFilter())
 
     # Obtener el registrador raíz y agregar los manipuladores
-    logger = logging.getLogger('julia')
+    logger = logging.getLogger('face_recognition')
     logger.addHandler(console_handler)
     logger.addHandler(file_handler)
     logger.addHandler(file_error_handler)

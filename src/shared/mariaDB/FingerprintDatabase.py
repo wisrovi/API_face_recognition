@@ -20,7 +20,7 @@ from shared.mariaDB.models import Base, FingerprintEntry
 logger = logger_custom("fingerprint")
 
 formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-file_handler = logging.FileHandler("log_fingerprint.log")
+file_handler = logging.FileHandler("/logs/log_fingerprint.log")
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
@@ -41,11 +41,11 @@ class FingerprintDatabase:
         self.used_sqlite = used_sqlite
 
         if used_sqlite:
-            self._db_url = f"sqlite:///{database[0]}.db"
+            self._db_url = f"sqlite:///{database}.db"
         else:
             self._db_url = (
                 f"mysql+mysqlconnector://{user}:{password}@{host}/{database}",
-            )
+            )[0]
 
         self.__setup__()
 
@@ -95,7 +95,8 @@ class FingerprintDatabase:
             if self.used_sqlite and not os.path.exists(
                 "/app/fingerprintdb.db",
             ):
-                self.__setup__()
+                pass
+            self.__setup__()
 
             if not self.is_connected:
                 raise RuntimeError("Database connection is not established.")

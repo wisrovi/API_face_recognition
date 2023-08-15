@@ -14,49 +14,53 @@ x-app-common:
 services:
   sidecar:
     <<: *app-common
+    environment:
+      - DEBUG=1
     volumes:
       - ./src:/app
       # Extend homes to preserve bash and python history (DX)
       - app-roothome:/root
   
   api:
-    <<: *app-common
-    command: uvicorn api:app --host 0.0.0.0 --port 1722 --reload
-    #command: gunicorn -b 0.0.0.0:1722 -w 4 -t 120 -k uvicorn.workers.UvicornWorker --access-logfile access.log --log-level info api:app --reload
+    #build:
+    #  context: .
+    #  dockerfile: Dockerfile
+    #command: uvicorn api:app --host 0.0.0.0 --port 1722 --reload
+    #command: gunicorn -b 0.0.0.0:1722 -w 4 -t 120 -k uvicorn.workers.UvicornWorker --access-logfile /logs/access.log --log-level info api:app  --reload
+    image: wisrovi/api_face_recognition:V1.0
     volumes:
-      - ./src:/app
-      # Extend homes to preserve bash and python history (DX)
-      - app-roothome:/root
+      - ./logs:/logs
+    #  - ./src:/app
     ports:
       - "1722:1722"
 
-  mariaDB:     
-    image: mariadb
-    environment:
-      - MYSQL_RANDOM_ROOT_PASSWORD=yes
-      - MYSQL_USER=fingerprint_FC_db
-      - MYSQL_PASSWORD=secret_fingerprint_password
-      - MYSQL_DATABASE=fingerprintdb
-    volumes:
-      - ../mariadb:/var/lib/mysql
-    healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "--silent" ]
-      interval: 10s
-      timeout: 10s
-      retries: 5
-    restart: always
+  #mariaDB:     
+  #  image: mariadb    
+  #  env_file:
+  #    - .envs/app.env
+  #  volumes:
+  #    #- ../mariadb_data:/var/lib/mysql
+  #    - mariadb_data:/var/lib/mysql
+  #  #ports:
+  #  #  - "3306:3306"
+  #  healthcheck:
+  #    test: [ "CMD", "mysqladmin", "ping", "--silent" ]
+  #    interval: 10s
+  #    timeout: 10s
+  #    retries: 5
+  #  restart: always
 
-  web_mariaDB:
-    image: phpmyadmin
-    ports:
-      - "3306:80"
-    environment:
-      - PMA_HOST=mariaDB
-      - PMA_PORT=3306
-    depends_on:
-      - mariaDB
-    restart: always
+  #web_mariaDB:
+  #  image: phpmyadmin
+  #  ports:
+  #    - "3307:80"
+  #  env_file:
+  #    - .envs/app.env
+  #  depends_on:
+  #    - mariaDB
+  #  restart: always
 
 volumes:
   app-apphome:
   app-roothome:
+  mariadb_data:

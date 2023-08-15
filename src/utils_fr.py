@@ -21,7 +21,7 @@ fingerprint_db = FingerprintDatabase(
     user=USER,
     password=PASSWORD,
     database=DATABASE,
-    used_sqlite=bool(os.environ.get("DEBUG", USE_SQLITE)),
+    used_sqlite=USE_SQLITE,
 )
 
 face_code = None
@@ -160,11 +160,17 @@ def fingerprint_vs_database(
     result_matches = []
 
     for i, fingerprint in enumerate(fingerprints_list):
-
+        if len(fingerprint) < 512:
+            raise HTTPException(
+                status_code=ERROR_533_BAD_FINGERPRINT[0],
+                detail=ERROR_533_BAD_FINGERPRINT[1] + f"[{i}].",
+            )
+        
         try:
             face_code.fingerprint = fingerprint
 
         except Exception as e:
+            logging.error(f"The lenght of fingerprint is not correct: {len(fingerprint)}")
             logging.exception(e)
 
             raise HTTPException(

@@ -65,6 +65,10 @@ class TestAPI:
             data=faces_to_fingerprint_data,
         )
 
+        if response.status_code != 200:
+            print(response)
+            assert False
+
         for i, result in enumerate(response.json()["indices"]):
             data_images[i]["fingerprint"] = response.json()["fingerprint"][i]
             data_images[i]["id"] = response.json()["indices"][i]
@@ -73,6 +77,10 @@ class TestAPI:
 
     def test_fingerprint_vs_database(self):
         fingerprint_data = [s["fingerprint"] for s in data_images]
+        for i, fingerprint in enumerate(fingerprint_data):
+            if len(fingerprint) == 0:
+                print(f"Error: {data_images[i]['name']} no tiene huella dactilar")
+                assert False
 
         # Ruta para comparar huellas dactilares con la base de datos
         fingerprint_url = f"{BASE_URL}/fingerprint_vs_database"
@@ -201,3 +209,7 @@ class TestAPI:
 
         assert matched_indices[0] == [2]
         assert matched_indices[1] == [0, 1, 3]
+
+
+if __name__ == "__main__":
+    pytest.main([__file__])

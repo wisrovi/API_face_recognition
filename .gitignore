@@ -1,3 +1,6 @@
 .vscode/
 src/access.log
+logs/
+src/logs/*
+src/test/resources/u/
 

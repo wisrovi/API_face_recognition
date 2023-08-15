@@ -1,15 +1,16 @@
-# Database
+import os
 
-HOST = ("mariaDB",)
-USER = ("fingerprint_FC_db",)
-PASSWORD = ("secret_fingerprint_password",)
-DATABASE = ("fingerprintdb",)
-USE_SQLITE = (True,)
+
+HOST = os.environ.get("PMA_HOST", "mariaDB")+":"+os.environ.get("PMA_PORT", "3306")
+USER = os.environ.get("MYSQL_USER", "fingerprint_FC_db")
+PASSWORD = os.environ.get("MYSQL_PASSWORD", "secret_fingerprint_password")
+DATABASE = os.environ.get("MYSQL_DATABASE", "fingerprintdb")
+USE_SQLITE = bool(os.environ.get("DEBUG", False))
 
 
 # Face recognition
 PATH_FR = "face_code.pkl"
-CONFIDENCE = 0.9
+CONFIDENCE = float(os.environ.get("CONFIDENCE_THRESHOLD", 0.6))
 
 
 # Error messages fastapi

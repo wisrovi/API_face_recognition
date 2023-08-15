@@ -12,7 +12,7 @@ class FingerprintEntry(Base):
     __tablename__ = "fingerprint_entries"
 
     id = Column(Integer, primary_key=True)
-    fingerprint = Column(String(length=255), nullable=False)
+    fingerprint = Column(String(length=4096), nullable=False)
     company = Column(String(length=255), nullable=False)
     group = Column(String(length=255), nullable=False)
 
