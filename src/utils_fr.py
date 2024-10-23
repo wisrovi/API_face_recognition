@@ -5,7 +5,7 @@ import pickle
 from fastapi import HTTPException
 
 from config.config_project import (
-    CONFIDENCE,
+    MAX_DISTANCE,
     DATABASE,
     ERROR_533_BAD_FINGERPRINT,
     HOST,
@@ -15,6 +15,9 @@ from config.config_project import (
     USER,
 )
 from shared.mariaDB.FingerprintDatabase import FingerprintDatabase
+from shared.FaceRecognition.Facecode_AES import Facecode_AES
+from config.config_project import MAX_DISTANCE
+import time
 
 fingerprint_db = FingerprintDatabase(
     host=HOST,
@@ -24,11 +27,11 @@ fingerprint_db = FingerprintDatabase(
     used_sqlite=USE_SQLITE,
 )
 
-face_code = None
+face_code: Facecode_AES = None
 if os.path.exists(PATH_FR):
     with open(PATH_FR, "rb") as f:
         face_code = pickle.load(f)
-    face_code.distance = CONFIDENCE
+    face_code.distance = MAX_DISTANCE
 else:
     raise Exception("The path to the face recognition model is not correct.")
 
@@ -52,6 +55,7 @@ def buffer_to_fingerprint(
     company: str = None,
     group: str = None,
     save: bool = False,
+    max_distance: int = MAX_DISTANCE,
 ) -> list:
     """
     Convert a face to a fingerprint.
@@ -60,14 +64,25 @@ def buffer_to_fingerprint(
     :param company: company name.
     :param group: group name.
     :param save: save in database.
+    :param max_distance: detections max_distance.
+
     :return: list of fingerprints.
     """
+
+    if max_distance:
+        face_code.distance = max_distance
 
     fingerprints_db = []
     table_ids = []
 
     for i, image_buffer in enumerate(buffer_list):
-        face_code.path = image_buffer
+        try:
+            face_code.path = image_buffer
+        except:
+            fingerprints_db.append(None)
+            table_ids.append(-1)
+            continue
+
         fingerprints_db.append(face_code.fingerprint)
 
         if save:
@@ -84,16 +99,20 @@ def buffer_to_fingerprint(
 
 
 def fingerprint_vs_fingerprint(
-    fingerprints_list: list,
-    fingerprints_db: list,
+    fingerprints_list: list, fingerprints_db: list, max_distance: int = MAX_DISTANCE
 ) -> list:
     """
     Compare two fingerprints.
 
     :param fingerprints_list: list of fingerprints.
     :param fingerprints_db: list of fingerprints.
+    :param max_distance: detections max_distance.
+
     :return: list of matches.
     """
+
+    if max_distance:
+        face_code.distance = max_distance
 
     if not isinstance(fingerprints_list, list):
         fingerprints_list = [fingerprints_list]
@@ -115,16 +134,20 @@ def fingerprint_vs_fingerprint(
 
 
 def face_vs_fingerprint(
-    buffer_list: list,
-    fingerprints_db: list,
+    buffer_list: list, fingerprints_db: list, max_distance: int = MAX_DISTANCE
 ) -> list:
     """
     Compare a face to a fingerprint.
 
     :param buffer_list: list of images in bytes.
     :param fingerprints_db: list of fingerprints.
+    :param max_distance: detections max_distance.
+
     :return: list of matches.
     """
+
+    if max_distance:
+        face_code.distance = max_distance
 
     if not isinstance(fingerprints_db, list):
         fingerprints_db = [fingerprints_db]
@@ -143,9 +166,7 @@ def face_vs_fingerprint(
 
 
 def fingerprint_vs_database(
-    fingerprints_list: list,
-    company: str,
-    group: str,
+    fingerprints_list: list, company: str, group: str, max_distance: int = MAX_DISTANCE
 ) -> list:
     """
     Compare a fingerprint to a database.
@@ -153,8 +174,13 @@ def fingerprint_vs_database(
     :param fingerprints_list: list of fingerprints.
     :param company: company name.
     :param group: group name.
+    :param max_distance: detections max_distance.
+
     :return: list of matches.
     """
+
+    if max_distance:
+        face_code.distance = max_distance
 
     fingerprints_db, table_ids = read_database(company, group)
     result_matches = []
@@ -165,12 +191,14 @@ def fingerprint_vs_database(
                 status_code=ERROR_533_BAD_FINGERPRINT[0],
                 detail=ERROR_533_BAD_FINGERPRINT[1] + f"[{i}].",
             )
-        
+
         try:
             face_code.fingerprint = fingerprint
 
         except Exception as e:
-            logging.error(f"The lenght of fingerprint is not correct: {len(fingerprint)}")
+            logging.error(
+                f"The lenght of fingerprint is not correct: {len(fingerprint)}"
+            )
             logging.exception(e)
 
             raise HTTPException(
@@ -186,9 +214,7 @@ def fingerprint_vs_database(
 
 
 def faces_vs_database(
-    buffer_list: list,
-    company: str,
-    group: str,
+    buffer_list: list, company: str, group: str, max_distance: int = MAX_DISTANCE
 ) -> list:
     """
     Compare a face to a database.
@@ -196,17 +222,36 @@ def faces_vs_database(
     :param buffer_list: list of images in bytes.
     :param company: company name.
     :param group: group name.
+    :param MAX_distance: detections MAX_distance.
+
     :return: list of matches.
     """
+
+    if max_distance:
+        face_code.distance = max_distance
 
     fingerprints_db, table_ids = read_database(company, group)
 
     result_matches = []
 
+    start_time_p = time.time()
     for image_buffer in buffer_list:
         face_code.path = image_buffer
 
+        start_time = time.time()
         result = face_code.compare_fingerprints(fingerprints_db, table_ids)
-        result_matches.append(result if result else [-1])
+        result = result if result else [-1]
+        result_matches.append(result)
+
+        end_time = time.time() - start_time
+        logging.info(
+            f"[compare_fingerprints_search] Elapsep time: {end_time} with max_distance: {face_code.distance}"
+        )
+
+        if len(buffer_list) == 1:
+            return result_matches
+
+    end_time = time.time() - start_time_p
+    logging.info(f"Matched termined in {end_time}")
 
     return result_matches

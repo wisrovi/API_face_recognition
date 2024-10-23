@@ -18,7 +18,9 @@ class Face_recognition:
     """
     This class is used for convert image to vector
     """
+
     vector: np.ndarray
+    use_gpu: bool = False
 
     def __init__(self, image_path: str = None, max_distance: float = 0.6):
         self.points = None
@@ -32,7 +34,12 @@ class Face_recognition:
         self.image = face_recognition.load_image_file(self.image_path)
 
     def coordinates_of_face(self):
-        self.face_locations = face_recognition.face_locations(self.image)
+        if not self.use_gpu:
+            self.face_locations = face_recognition.face_locations(self.image)
+        else:
+            self.face_locations = face_recognition.face_locations(
+                self.image, model="cnn"
+            )
 
     def coordinates_of_landmarks(self):
         self.points = face_recognition.face_landmarks(self.image)
@@ -51,10 +58,12 @@ class Face_recognition:
                 self.coordinates_of_landmarks()
                 self.get_face_code()
 
-    def compare(self,
-                all_face_vectors: List[np.ndarray],
-                all_names_of_vectors: List[str],
-                summary: bool = False) -> List[str]:
+    def compare(
+        self,
+        all_face_vectors: List[np.ndarray],
+        all_names_of_vectors: List[str],
+        summary: bool = False,
+    ) -> List[str]:
         """
         Compare the vector of the image with the vectors of the database
 
@@ -81,8 +90,11 @@ class Face_recognition:
 
         if len(result_compare) > 0:
             # opcion 1
-            result = [all_names_of_vectors[i]
-                      for i in range(len(result_compare)) if result_compare[i]]
+            result = [
+                all_names_of_vectors[i]
+                for i in range(len(result_compare))
+                if result_compare[i]
+            ]
 
             # opcion 2
             # position_positive = np.argmin(result_compare)

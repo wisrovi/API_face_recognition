@@ -1,11 +1,10 @@
 version: "3.7"
 
-services:
-  
+services:  
   api:
-    image: wisrovi/api_face_recognition:V1.0.1
+    image: wisrovi/api_face_recognition:V1.1.0
     volumes:
       - ./logs:/logs
-    #  - ./database/fingerprintdb.db:/app/fingerprintdb.db
+      - ./database:/app/database
     ports:
       - "1722:1722"
