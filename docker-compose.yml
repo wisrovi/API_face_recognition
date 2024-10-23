@@ -1,7 +1,6 @@
 version: "3.7"
 
-x-app-common:
-  &app-common
+x-app-common: &app-common
   build:
     context: .
     dockerfile: Dockerfile
@@ -10,6 +9,16 @@ x-app-common:
     - .envs/app.env
   volumes:
     - ./src:/app
+
+x-resources: &resources_gpu
+  restart: always
+  deploy:
+    resources:
+      reservations:
+        devices:
+          - driver: nvidia # use the GPU of the host
+            device_ids: ["0"] # use the GPU 0
+            capabilities: [gpu] # use the GPU
 
 services:
   sidecar:
@@ -20,22 +29,25 @@ services:
       - ./src:/app
       # Extend homes to preserve bash and python history (DX)
       - app-roothome:/root
-  
+
   api:
-    #build:
-    #  context: .
-    #  dockerfile: Dockerfile
+    <<: *resources_gpu
+    build:
+      context: .
+      dockerfile: Dockerfile
     #command: uvicorn api:app --host 0.0.0.0 --port 1722 --reload
     #command: gunicorn -b 0.0.0.0:1722 -w 4 -t 120 -k uvicorn.workers.UvicornWorker --access-logfile /logs/access.log --log-level info api:app  --reload
-    image: wisrovi/api_face_recognition:V1.0
+    image: wisrovi/api_face_recognition:V1.1.0
     volumes:
       - ./logs:/logs
-    #  - ./src:/app
+      - ./src:/app
+      - ./database:/app/database
     ports:
       - "1722:1722"
+    # command: tail -f /dev/null
 
-  #mariaDB:     
-  #  image: mariadb    
+  #mariaDB:
+  #  image: mariadb
   #  env_file:
   #    - .envs/app.env
   #  volumes:

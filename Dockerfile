@@ -5,6 +5,8 @@ ENV PYTHONDONTWRITEBYTECODE 1
 
 LABEL Maintainer="wisrovi.rodriguez@gmail.com"
 
+
+WORKDIR /app/database
 WORKDIR /app
 
 # install libreries for testing

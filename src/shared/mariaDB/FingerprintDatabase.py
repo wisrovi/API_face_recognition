@@ -93,7 +93,7 @@ class FingerprintDatabase:
     def requires_connection(method):
         def wrapper(self, *args, **kwargs):
             if self.used_sqlite and not os.path.exists(
-                "/app/fingerprintdb.db",
+                "/app/database/fingerprintdb.db",
             ):
                 pass
             self.__setup__()
@@ -117,11 +117,11 @@ class FingerprintDatabase:
                 end_time = time.time()
                 execution_time = end_time - start_time
                 current_time = time.strftime("%Y-%m-%d %H:%M:%S")
-                logger.info(
-                    f"{current_time} - Method: {method_name} "
-                    + f"| Args: {method_args} | Kwargs: {method_kwargs} "
-                    + f"| Execution Time: {execution_time:.4f} seconds"
-                )
+                # logger.info(
+                #     f"{current_time} - Method: {method_name} "
+                #     + f"| Args: {method_args} | Kwargs: {method_kwargs} "
+                #     + f"| Execution Time: {execution_time:.4f} seconds"
+                # )
 
                 return result
 

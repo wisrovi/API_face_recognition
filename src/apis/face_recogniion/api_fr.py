@@ -1,3 +1,4 @@
+import time
 from fastapi import FastAPI, UploadFile, Form, HTTPException, File, Depends
 from fastapi.security.oauth2 import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.responses import HTMLResponse
@@ -23,6 +24,7 @@ from utils_fr import (
     fingerprint_vs_database,
     fingerprint_vs_fingerprint,
 )
+import logging
 
 
 app = FastAPI(
@@ -165,6 +167,7 @@ async def compare_fingerprint_vs_database(
     company: Optional[str] = Form(None),
     group: Optional[str] = Form(None),
     # token_data: Token = Depends(is_authenticated)
+    max_distance: Optional[int] = 0.6,
 ) -> FingerprintCompareResult:
     """
     Compare fingerprint(s) against the database with optional filters.
@@ -186,7 +189,9 @@ async def compare_fingerprint_vs_database(
             status_code=400, detail="Invalid fingerprint(s) provided for comparison"
         )
 
-    result_matches = fingerprint_vs_database(fingerprints, company, group)
+    result_matches = fingerprint_vs_database(
+        fingerprints, company, group, max_distance=max_distance
+    )
 
     return FingerprintCompareResult(matched_indices=result_matches)
 
@@ -198,6 +203,7 @@ async def compare_faces_vs_database(
     company: Optional[str] = Form(None),
     group: Optional[str] = Form(None),
     # token_data: Token = Depends(is_authenticated)
+    max_distance: Optional[float] = Form(0.6),
 ) -> FingerprintCompareResult:
     """
     Compare face image(s) against the database with optional filters.
@@ -213,6 +219,7 @@ async def compare_faces_vs_database(
     if not images:
         raise HTTPException(status_code=400, detail="No se han proporcionado imágenes")
 
+    start_time = time.time()
     buffer_list = []
     for image in images:
         if not is_allowed_file(image.filename) or not is_allowed_mime_type(
@@ -228,7 +235,15 @@ async def compare_faces_vs_database(
         image_buffer.seek(0)
         buffer_list.append(image_buffer)
 
-    result_matches = faces_vs_database(buffer_list, company, group)
+    end_time = time.time() - start_time
+    logging.info(f"[read buffers images] Elapsep time: {end_time}")
+
+    start_time = time.time()
+    result_matches = faces_vs_database(
+        buffer_list, company, group, max_distance=max_distance
+    )
+    end_time = time.time() - start_time
+    logging.info(f"[faces_vs_database] Elapsep time: {end_time}")
 
     return FingerprintCompareResult(matched_indices=result_matches)
 
@@ -239,6 +254,7 @@ async def compare_face_vs_fingerprint(
     images: List[UploadFile] = File(...),
     fingerprints: List[str] = Form(...),
     # token_data: Token = Depends(is_authenticated)
+    max_distance: Optional[int] = 0.6,
 ) -> FingerprintCompareResult:
     if not images:
         raise HTTPException(status_code=400, detail="No se han proporcionado imágenes")
@@ -264,7 +280,9 @@ async def compare_face_vs_fingerprint(
         image_buffer.seek(0)
         buffer_list.append(image_buffer)
 
-    result_matches = face_vs_fingerprint(buffer_list, fingerprints)
+    result_matches = face_vs_fingerprint(
+        buffer_list, fingerprints, max_distance=max_distance
+    )
 
     return FingerprintCompareResult(matched_indices=result_matches)
 
@@ -275,6 +293,7 @@ async def compare_fingerprint_vs_fingerprint(
     fingerprint1: List[str] = Form(...),
     fingerprint2: List[str] = Form(...),
     # token_data: Token = Depends(is_authenticated)
+    max_distance: Optional[int] = 0.6,
 ) -> FingerprintCompareResult:
     """
     Compare a fingerprint against another fingerprint or a list of fingerprints.
@@ -297,7 +316,9 @@ async def compare_fingerprint_vs_fingerprint(
     elif not isinstance(fingerprint2, list):
         raise HTTPException(status_code=400, detail="Invalid input for fingerprint2")
 
-    match_result = fingerprint_vs_fingerprint(fingerprint1, fingerprint2)
+    match_result = fingerprint_vs_fingerprint(
+        fingerprint1, fingerprint2, max_distance=max_distance
+    )
 
     return FingerprintCompareResult(
         matched_indices=match_result,
@@ -310,6 +331,7 @@ async def compare_face_vs_faces(
     images1: List[UploadFile] = File(...),
     images2: List[UploadFile] = File(...),
     # token_data: Token = Depends(is_authenticated)
+    max_distance: Optional[int] = 0.6,
 ) -> FingerprintCompareResult:
     """
     Compare an image against a single face or a list of faces.
@@ -361,7 +383,9 @@ async def compare_face_vs_faces(
         image_buffer.seek(0)
         buffer_list.append(image_buffer)
 
-    result_matches = face_vs_fingerprint(buffer_list, fingerprints)
+    result_matches = face_vs_fingerprint(
+        buffer_list, fingerprints, max_distance=max_distance
+    )
 
     return FingerprintCompareResult(matched_indices=result_matches)
 
