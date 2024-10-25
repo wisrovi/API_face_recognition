@@ -72,6 +72,17 @@ services:
   #    - mariaDB
   #  restart: always
 
+
+  interfaz:
+    build: 
+      context: ./interfaz_uso
+      dockerfile: Dockerfile
+    image: wisrovi/api_face_recognition_interfaz:V1.0.0
+    volumes:
+      - ./database:/app/database
+    ports:
+      - "7860:7860"
+
 volumes:
   app-apphome:
   app-roothome:

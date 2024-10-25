@@ -8,3 +8,10 @@ services:
       - ./database:/app/database
     ports:
       - "1722:1722"
+
+  interfaz:
+    image: wisrovi/api_face_recognition_interfaz:V1.0.0
+    volumes:
+      - ./database:/app/database
+    ports:
+      - "7860:7860"
