@@ -6,6 +6,10 @@ ENV PYTHONDONTWRITEBYTECODE 1
 
 LABEL Maintainer="wisrovi.rodriguez@gmail.com"
 
+RUN apt-get update && \
+    apt-get install -y libgl1-mesa-glx
+RUN apt-get install ffmpeg libsm6 libxext6  -y
+
 WORKDIR /app
 
 ENV server="api"
